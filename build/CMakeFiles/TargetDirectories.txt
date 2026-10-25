@@ -1,0 +1,6 @@
+/mnt/build/CMakeFiles/aiws_m2.dir
+/mnt/build/CMakeFiles/ai_workspace_m3.dir
+/mnt/build/CMakeFiles/edit_cache.dir
+/mnt/build/CMakeFiles/rebuild_cache.dir
+/mnt/build/CMakeFiles/ai_workspace_m3_autogen_timestamp_deps.dir
+/mnt/build/CMakeFiles/ai_workspace_m3_autogen.dir

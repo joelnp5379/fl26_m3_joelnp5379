@@ -10,8 +10,11 @@ namespace aiws {
 class ContextStrategy {
 public:
     virtual ~ContextStrategy() = default;
-    virtual std::vector<ContextItem> build(const std::vector<SearchResult>& ranked,
-                                           std::size_t token_budget) const = 0;
+
+    virtual std::vector<ContextItem> build(const std::vector<SearchResult>&,
+                                           std::size_t) const = 0;
 };
 
-}  // namespace aiws
+}
+
+  // namespace aiws

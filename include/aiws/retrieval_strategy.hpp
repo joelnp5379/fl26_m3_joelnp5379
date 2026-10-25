@@ -11,10 +11,11 @@ namespace aiws {
 class RetrievalStrategy {
 public:
     virtual ~RetrievalStrategy() = default;
-    virtual std::vector<SearchResult> search(const std::string& query,
-                                             int k,
-                                             const std::vector<Chunk>& chunks,
-                                             const CorpusIndex& index) const = 0;
+
+    virtual std::vector<SearchResult> search(const std::string&,
+                                             int,
+                                             const std::vector<Chunk>&,
+                                             const CorpusIndex&) const = 0;
 };
 
 }  // namespace aiws

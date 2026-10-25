@@ -1,42 +1,96 @@
 #include "aiws/gui/context_widget.hpp"
 
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QPlainTextEdit>
+#include <QPushButton>
+#include <QSlider>
+#include <QVBoxLayout>
+#include <QString>
+
 namespace aiws::gui {
 
 ContextWidget::ContextWidget(QWidget* parent) : QWidget(parent) {
-    // TODO: Construct and lay out the Context area, configure the token-budget
-    // control, connect local events, and establish initial state.
+    context_budget_slider_ = new QSlider(Qt::Horizontal, this);
+    context_budget_slider_->setRange(50, 1000);
+    context_budget_slider_->setSingleStep(50);
+    context_budget_slider_->setValue(300);
+    
+    budget_value_label_ = new QLabel("300", this);
+    
+    build_context_button_ = new QPushButton("Build Context", this);
+    build_context_button_->setEnabled(false);
+    
+    context_text_ = new QPlainTextEdit(this);
+    context_text_->setReadOnly(true);
+    context_text_->setPlaceholderText("Built context will appear here.");
+
+    auto* top_layout = new QHBoxLayout();
+    top_layout->addWidget(new QLabel("<b>Context:</b>", this));
+    top_layout->addStretch();
+    
+    auto* mid_layout = new QHBoxLayout();
+    mid_layout->addWidget(new QLabel("Token budget:", this));
+    mid_layout->addWidget(context_budget_slider_);
+    mid_layout->addWidget(budget_value_label_);
+    mid_layout->addWidget(build_context_button_);
+
+    auto* main_layout = new QVBoxLayout(this);
+    main_layout->addLayout(top_layout);
+    main_layout->addLayout(mid_layout);
+    main_layout->addWidget(context_text_);
+
+    connect(context_budget_slider_, &QSlider::valueChanged,
+            this, &ContextWidget::budget_changed);
+            
+    connect(build_context_button_, &QPushButton::clicked,
+            this, &ContextWidget::request_context);
 }
 
 int ContextWidget::token_budget() const {
-    // TODO
-    return 0;
+    return context_budget_slider_->value();
 }
 
 void ContextWidget::set_build_context_enabled(bool enabled) {
-    // TODO
-    (void)enabled;  // To suppress unused-parameter warning.
+    build_context_button_->setEnabled(enabled);
 }
 
 void ContextWidget::set_context(const std::vector<ContextItem>& items) {
-    // TODO
-    (void)items;  // To suppress unused-parameter warning.
+    QString output;
+    if (items.empty()) {
+        output = "No context generated.";
+    } else {
+        for (const auto& item : items) {
+            output += QString("Document: %1\nChunk: %2\nTokens: %3\nScore: %4\nTruncated: %5\n\n%6\n\n-----------------\n\n")
+                        .arg(QString::fromStdString(item.document_id))
+                        .arg(item.chunk_sequence)
+                        .arg(item.token_count)
+                        .arg(item.score)
+                        .arg(item.truncated ? "Yes" : "No")
+                        .arg(QString::fromStdString(item.text));
+        }
+    }
+    context_text_->setPlainText(output);
 }
 
 void ContextWidget::clear_context() {
-    // TODO
+    context_text_->clear();
 }
 
 void ContextWidget::reset() {
-    // TODO
+    context_budget_slider_->setValue(300);
+    budget_value_label_->setText("300");
+    clear_context();
+    set_build_context_enabled(false);
 }
 
 void ContextWidget::request_context() {
-    // TODO
+    emit build_context_requested(token_budget());
 }
 
 void ContextWidget::budget_changed(int value) {
-    // TODO
-    (void)value;  // To suppress unused-parameter warning.
+
+    budget_value_label_->setText(QString::number(value));
 }
 
 }  // namespace aiws::gui
